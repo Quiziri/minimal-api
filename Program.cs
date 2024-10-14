@@ -1,8 +1,16 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MinimalAPI.Dominio.DTOs;
+using MinimalAPI.Dominio.Services;
+using MinimalAPI.Dominio.Services.Interfaces;
 using MinimalAPI.Infraestrutura.Db;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddScoped<IAdministradorServico, AdministradorServico>();
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<DbContexto>(options => {
     options.UseMySql(
@@ -15,8 +23,9 @@ var app = builder.Build();
 
 app.MapGet("/", () => "Hello World!");
 
-app.MapPost("/login", (LoginDTO loginDTO) => {
-    if(loginDTO.Email == "adm@teste.com" && loginDTO.Senha == "123456") {
+app.MapPost("/login", ([FromBody] LoginDTO loginDTO, IAdministradorServico administradorServico) => {
+    if(administradorServico.Login(loginDTO) != null) 
+    {
         return Results.Ok("Login com sucesso");
     }
     else
@@ -24,5 +33,8 @@ app.MapPost("/login", (LoginDTO loginDTO) => {
         return Results.Unauthorized();
     }
 });
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.Run();
