@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using MinimalAPI.Dominio.Entidades;
 using MinimalAPI.Dominio.Interfaces;
@@ -13,7 +9,7 @@ namespace MinimalAPI.Dominio.Services
     {
         private readonly DbContexto _contexto;
 
-        private VeiculoServico(DbContexto contexto)
+        public VeiculoServico(DbContexto contexto)
         {
             _contexto = contexto;
         }
@@ -41,7 +37,7 @@ namespace MinimalAPI.Dominio.Services
             _contexto.SaveChanges();
         }
 
-        public List<Veiculo> Todos(int pagina = 1, string? nome = null, string? marca = null)
+        public List<Veiculo> Todos(int? pagina = 1, string? nome = null, string? marca = null)
         {
             var query =_contexto.Veiculos.AsQueryable();
             if(!string.IsNullOrEmpty(nome))
@@ -51,8 +47,10 @@ namespace MinimalAPI.Dominio.Services
 
             int itensPorPagina = 10;
 
-            query = query.Skip((pagina - 1) * itensPorPagina).Take(itensPorPagina);
-
+            if(pagina != null)
+            {
+                query = query.Skip(((int)pagina - 1) * itensPorPagina).Take(itensPorPagina);
+            }
             return query.ToList();
         }
     }
