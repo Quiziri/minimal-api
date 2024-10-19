@@ -1,6 +1,7 @@
 using MinimalAPI.Dominio.DTOs;
 using MinimalAPI.Dominio.Entidades;
 using MinimalAPI.Infraestrutura.Db;
+using MinimalAPI.Dominio.Interfaces;
 
 namespace MinimalAPI.Dominio.Services
 {
